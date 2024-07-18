@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="pizza.js" defer></script>
+</head>
+
+<body x-data="pizzaCart">
+    <h1 x-text="title"></h1>
+
+
+    <h2>Your cart</h2>
+    <div class="message">Message here</div>
+    <table>
+        <tr>
+            <th>Flavour</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+        </tr>
+
+
+
+        <template x-for="pizza in cartPizzas">
+            <tr>
+                <td x-text="pizza flavour"></td>
+                <td x-text="pizza size"></td>
+                <td x-text="pizza.price">57.88></td>
+                <td>
+                    <button>+</button>
+                    x<span x-text="pizza.qty"></span>
+                    <button>-</button>
+
+                </td>
+                <td x-text="pizza.total"></td>
+            </tr>
+        </template>
+
+
+        <tr>
+            <td colespan="3">Total</td>
+            <td colespan="2" style="float:right">R<span x-text="cartTotal"></span></td>
+        </tr>
+
+        <tr>
+            <td colspan="3">Pay now</td>
+            <td>
+                <input type="text">
+            </td>
+            <td><button>Pay</button></td>
+        </tr>
+    </table>
+
+
+
+    <div class="pizzas">
+        <h2>Pizzas</h2>
+        <template x-for="pizza in pizzas">
+            <div class="pizza">
+                <h5 x-text="pizza.flavour"></h5>
+                <!-- <span x-text="pizza.id"></span> -->
+                <span x-text="pizza.size"></span>@
+                <strong>
+                    R<span x-text="pizza.price"></span>
+                </strong>
+                <div>
+                    <button class="btn" x-on:click="addPizzaToCart(pizza.id)">Add to cart</button>
+                </div>
+            </div>
+
+
+
+        </template>
+    </div>
+</body>
+
+</html>
