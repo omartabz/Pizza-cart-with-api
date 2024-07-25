@@ -4,81 +4,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="//unpkg.com/alpinejs" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Perfect Pizza</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script> 
+    <script src="https://unpkg.com/axios/dist/axios.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js" defer></script>
     <link rel="stylesheet" href="style.css">
-    <script src="pizza.js" defer></script>
+   
 </head>
 
-<body x-data="pizzaCart">
-    <h1 x-text="title"></h1>
+<body>
+<div x-data="pizzaCartWithAPIWidget">
+        <h1 x-text="title">Perfect Pizza</h1>
+        <h1 style="text-align: center;">Perfect Pizza</h1>
+        <!-- <div class="cart" x-cloak> -->
+            Username:<input type="text" x-model="username">
+            <button x-on:click="login" x-show="!cartId">Login</button>
+            <button x-on:click="logout" x-show="username && cartId">Logout</button>
+        </div>
+        <div x-show="cartId">
+            Cart Code:<span x-text="cartId"></span>
+        </div>
+        <div x-show="cartTotal > 0">
+        <h2>Your cart</h2>
+        <div class="message" x-text="message">Message here</div>
+        <div class="table">
+            <tr>
+                <th>Flavour</th>
+                <th>Size</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+        </div>
+
+        <h3>Featured Pizzas</h3>
+        <template x-for="pizza in featuredPizzas">
+        <img src="pizza-1.png" alt="Pizza" width="150">
+        <h4 x-text="pizza.flavour"></h4>
+        <h5>R<span x-text=""pizza.price></span></h5>
+        <p x-text="pizza.size"></p>
+        <button class="btn" @click="addPizzaToCart(pizza.id)">Buy</button>
+        </template>
+
+        <div class="container">
+            <h3>Shopping Cart</h3>
+
+            <div class="size">
+                <span class="size-text">Small</span>
+                <div class="quantity-control">
+                    <button class="plus" x-on:click="total += 49.99">+</button>
+                    <span class="amount">49.99</span>
+                    <button class="minus" x-on:click="total = Math.max(total - 49.99, 0)">-</button>
+                </div>
+            </div>
+
+            <div class="size">
+                <span class="size-text">Medium</span>
+                <div class="quantity-control">
+                    <button class="plus" x-on:click="total += 89.99">+</button>
+                    <span class="amount">89.99</span>
+                    <button class="minus" x-on:click="total = Math.max(total - 89.99, 0)">-</button>
+                </div>
+            </div>
+
+            <div class="size">
+                <div class="size-text">Large</div>
+                <div class="quantity-control">
+                    <button class="plus" x-on:click="total += 129.99">+</button>
+                    <span class="amount">129.99</span>
+                    <button class="minus" x-on:click="total = Math.max(total - 129.99, 0)">-</button>
+                </div>
+            </div>
+
+            <h3>Payment Amount: <input type="number" class="theInputValue" id="payment-amount" x-model="amount"></h3>
+            <button x-on:click="payForCart">Pay</button>
+        </div>
 
 
-    <h2>Your cart</h2>
-    <div class="message">Message here</div>
-    <table>
-        <tr>
-            <th>Flavour</th>
-            <th>Size</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Total</th>
-        </tr>
+        <div class="pizzas">
+            <div class="pizza large_pizza">
+                <img src="pizza-1.png" width="170">
+                <h2 style="text-align: center;">Large Pizza</h2>
+                <h3 style="text-align: center;">R129.99</h3>
+                <div>
+                    <p style="text-align: center;">Large margeritha pizza with 3 toppings max. 3 meat toppings max. 3 or
+                        less other toppings.</p>
+                </div>
+                <div class="button">
+                    <button class="Buy" style="height: 50px; width:150px" x-on:click="total+=129.99">Buy</button>
+                </div>
+            </div>
+
+            <div class="pizza medium_pizza">
+                <img src="pizza-1.png" width="160">
+                <h2 style="text-align: center;">Medium Pizza</h2>
+                <h3 style="text-align: center;">R89.99</h3>
+                <div>
+                    <p style="text-align: center;">Medium margeritha pizza with3 toppings max.2 or less other toppings.
+                    </p>
+                </div>
+                <div class="button">
+                    <button class="Buy" style="height: 50px; width:150px" x-on:click="total+=89.99">Buy</button>
+                </div>
+            </div>
 
 
+            <div class="pizza small_pizza">
+                <img src="pizza-1.png" width="160">
+                <h2 style="text-align: center;">Small Pizza</h2>
+                <h3 style="text-align: center;">R49.99</h3>
+                <div>
+                    <p style="text-align: center;">Small pizza with 3 toppings 1 meat topping. 3 or less other toppings.
+                    </p>
+                </div>
+                <div class="button">
+                    <button class="Buy" style="height: 50px; width:150px" x-on:click="total+=49.99">Buy</button>
+                </div>
+            </div>
+        </div>
 
         <template x-for="pizza in cartPizzas">
             <tr>
                 <td x-text="pizza flavour"></td>
                 <td x-text="pizza size"></td>
-                <td x-text="pizza.price">57.88></td>
+                <td x-text="pizza.price"></td>
                 <td>
-                    <button>+</button>
+                    <button x-on:click="addPizzaToCart(pizza.id)">+</button>
                     x<span x-text="pizza.qty"></span>
-                    <button>-</button>
-
+                    <button x-on:click="removePizzaFromCart(pizza.id)">-</button>
                 </td>
-                <td x-text="pizza.total"></td>
+                <td x-text="pizza.price.total"></td>
             </tr>
         </template>
 
-
-        <tr>
-            <td colespan="3">Total</td>
-            <td colespan="2" style="float:right">R<span x-text="cartTotal"></span></td>
-        </tr>
-
-        <tr>
-            <td colspan="3">Pay now</td>
-            <td>
-                <input type="text">
-            </td>
-            <td><button>Pay</button></td>
-        </tr>
-    </table>
-
-
-
-    <div class="pizzas">
-        <h2>Pizzas</h2>
-        <template x-for="pizza in pizzas">
-            <div class="pizza">
-                <h5 x-text="pizza.flavour"></h5>
-                <!-- <span x-text="pizza.id"></span> -->
-                <span x-text="pizza.size"></span>@
-                <strong>
-                    R<span x-text="pizza.price"></span>
-                </strong>
-                <div>
-                    <button class="btn" x-on:click="addPizzaToCart(pizza.id)">Add to cart</button>
+        
+        <div class="pizzas" x-show="username && cartId">
+            <h2>Pizzas</h2>
+            <template x-for="pizza in pizzas">
+                <div class="pizza">
+                    <h5 x-text="pizza.flavour"></h5>
+                    <!-- <span x-text="pizza.id"></span> -->
+                    <span x-text="pizza.size"></span>@
+                    <strong>
+                        R<span x-text="pizza.price"></span>
+                    </strong>
+                    <div>
+                        <button class="btn" x-on:click="addPizzaToCart(pizza.id)">Add to cart</button>
+                    </div>
                 </div>
-            </div>
-
-
-
-        </template>
+            </template>
+        </div>
     </div>
 </body>
-
+<script src="./script.js"></script>
 </html>
